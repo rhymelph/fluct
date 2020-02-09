@@ -17,6 +17,7 @@ class CreateCommand extends Command<int> {
 
   @override
   String get invocation => '${super.invocation} <path>';
+
   @override
   String get name => 'create';
 
@@ -30,9 +31,11 @@ class CreateCommand extends Command<int> {
         ],
         allowedHelp: allowedHelp);
     argParser.addOption('arg',
-        abbr: 'a', help: "create a new file about your custom widget use arg in 'fluct.yaml'");
+        abbr: 'a',
+        help:
+            "create a new file about your custom widget use arg in 'fluct.yaml'");
   }
-  Future<int> run() async{
+  Future<int> run() async {
     if (argResults.arguments.isEmpty) {
       print(usage);
     } else {
@@ -95,7 +98,8 @@ class CreateCommand extends Command<int> {
     final works = name.split('_');
     for (final work in works) {
       if (work.isNotEmpty) {
-        className += work[0].toUpperCase() + (work.length>1?work.substring(1):'');
+        className +=
+            work[0].toUpperCase() + (work.length > 1 ? work.substring(1) : '');
       }
     }
     print('create class $className');

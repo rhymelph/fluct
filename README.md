@@ -1,4 +1,5 @@
 # fluct
+[![pub package](https://img.shields.io/pub/v/fluct.svg)](https://pub.dartlang.org/packages/fluct)
 
 A command-lint tool for help develop flutter application.
 
