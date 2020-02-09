@@ -1,6 +1,6 @@
 # fluct
 
-A command-lint tool for help developer create flutter file.
+A command-lint tool for help develop flutter application.
 
 ## Installation
 
