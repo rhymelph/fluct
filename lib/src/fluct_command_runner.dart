@@ -5,7 +5,7 @@ import 'package:args/command_runner.dart';
 import 'package:fluct/src/utils.dart';
 import 'command/create_command.dart';
 
-const packageVersion = '1.0.0';
+const packageVersion = '1.0.2';
 
 Future<int> run(List<String> args) => _CommandRunner().run(args);
 
