@@ -1,14 +1,25 @@
 import 'dart:io';
 
 import 'package:args/command_runner.dart';
-import 'package:fluct/fluct.dart' as fluct;
+import 'package:fluct/src/fluct_command_runner.dart';
+import 'package:io/ansi.dart';
+import 'package:io/io.dart';
 
-void main(List<String> arguments) {
-  var run = CommandRunner('fluct', 'create your flutter path')
-  ..addCommand(fluct.CreateCommand())
-  ..run(arguments).catchError((error){
-    if(error is UsageException) throw error;
-    print(error);
-    exit(64);
-  });
+void main(List<String> arguments) async{
+
+  try{
+    exitCode = await run(arguments);
+  } catch (e,s){
+    if(e is UsageException){
+      print(red.wrap(e.message));
+      print(' ');
+      print(e.usage);
+      exitCode = ExitCode.usage.code;
+    }else{
+      print(red.wrap(e.toString()));
+      print(red.wrap(s.toString()));
+      exitCode = ExitCode.unavailable.code;
+    }
+   
+  }
 }

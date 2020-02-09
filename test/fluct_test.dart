@@ -1,4 +1,3 @@
-import 'package:fluct/fluct.dart';
 import 'package:test/test.dart';
 
 void main() {
