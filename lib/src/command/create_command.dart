@@ -1,8 +1,9 @@
 import 'dart:io';
 
 import 'package:args/command_runner.dart';
+import 'package:cli_util/cli_logging.dart';
 import 'package:yaml/yaml.dart' as yaml;
-
+import 'package:io/ansi.dart' as io;
 import '../constant.dart';
 
 class CreateCommand extends Command<int> {
@@ -35,14 +36,17 @@ class CreateCommand extends Command<int> {
         help:
             "create a new file about your custom widget use arg in 'fluct.yaml'");
   }
+  Logger logger = Logger.standard();
+
   Future<int> run() async {
     if (argResults.arguments.isEmpty) {
       print(usage);
+      logger.stdout(usage);
     } else {
       final type = argResults['type'];
       final path = argResults.arguments.last;
       if (allowedHelp.containsKey(type)) {
-        print(allowedHelp[type]);
+        logger.stdout('tip: ${allowedHelp[type]}');
         switch (type) {
           case 'stful':
             createFile(path, stful);
@@ -55,7 +59,7 @@ class CreateCommand extends Command<int> {
             break;
         }
       } else {
-        print(usage);
+        logger.stdout(usage);
       }
     }
     return 0;
@@ -65,21 +69,24 @@ class CreateCommand extends Command<int> {
     String arg = argResults['arg'];
 
     if (arg.isEmpty) {
-      print("error:please enter your arg in 'fluct.yaml' ");
-      print('exit 0');
+      logger.stdout(io
+          .wrapWith("error:please enter your arg in 'fluct.yaml' ", [io.red]));
+      logger.stdout('All done exit 0');
       exit(64);
     }
     final fluctFile = File('fluct.yaml');
     if (!fluctFile.existsSync()) {
-      print("error:please create your 'fluct.yaml' ");
-      print('exit 0');
+      logger.stdout(
+          io.wrapWith("error:please create your 'fluct.yaml' ", [io.red]));
+      logger.stdout('All done exit 0');
       exit(64);
     }
     final yamlContent = yaml.loadYaml(fluctFile.readAsStringSync());
     final content = yamlContent[arg];
     if (content == null) {
-      print("error:not found '$arg' in your 'fluct.yaml' ");
-      print('exit 0');
+      logger.stdout(io
+          .wrapWith("error:not found '$arg' in your 'fluct.yaml' ", [io.red]));
+      logger.stdout('All done exit 0');
       exit(64);
     } else {
       createFile(path, content.toString());
@@ -102,10 +109,10 @@ class CreateCommand extends Command<int> {
             work[0].toUpperCase() + (work.length > 1 ? work.substring(1) : '');
       }
     }
-    print('create class $className');
+    logger.stdout('tip: will create $className class');
     if (className.isEmpty) {
-      print('error:please enter your path');
-      print('exit 0');
+      logger.stdout(io.wrapWith('error:please enter your path', [io.red]));
+      logger.stdout('All done exit 0');
       exit(64);
     }
     final file = File('$path.dart');
@@ -113,7 +120,7 @@ class CreateCommand extends Command<int> {
       file.createSync(recursive: true);
     }
     file.writeAsStringSync(model.replaceAll(r'$NAME$', className));
-    print('create success');
-    print('exit 0');
+    logger.stdout(io.wrapWith('success: create complete.', [io.green]));
+    logger.stdout('All done exit 0');
   }
 }
