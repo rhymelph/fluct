@@ -1,6 +1,6 @@
 name: fluct
 description: A command-lint tool for help develop flutter application.
-version: 1.0.2
+version: 1.0.3
 homepage: https://github.com/rhymelph/fluct
 executables:
   fluct:
