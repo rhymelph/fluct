@@ -2,10 +2,12 @@ import 'dart:io';
 
 import 'package:args/command_runner.dart';
 import 'package:cli_util/cli_logging.dart';
+import 'package:path/path.dart';
 import 'package:yaml/yaml.dart' as yaml;
 import 'package:io/ansi.dart' as io;
 import '../constant.dart';
 
+/// 创建代码的模板
 class CreateCommand extends Command<int> {
   final allowedHelp = {
     'stful': 'Create a new file about StatefulWidget',
@@ -52,7 +54,7 @@ class CreateCommand extends Command<int> {
             createFile(path, stful);
             break;
           case 'stless':
-            createFile(path, stful);
+            createFile(path, stless);
             break;
           case 'custom':
             createCustomFile(path);
@@ -98,7 +100,7 @@ class CreateCommand extends Command<int> {
     String name;
 
     if (path.contains('/')) {
-      name = path.substring(path.lastIndexOf('/') + 1);
+      name = basename(path);
     } else {
       name = path;
     }
