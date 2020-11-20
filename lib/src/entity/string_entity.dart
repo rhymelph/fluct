@@ -1,6 +1,4 @@
-
-
-class StringCommendEntity{
+class StringCommendEntity {
   final int start;
   final int end;
   //要忽略的number
@@ -8,5 +6,6 @@ class StringCommendEntity{
   //是否有r开头
   final bool isPrefixR;
 
-  StringCommendEntity(this.start, this.end, this.ignoreNumber,[this.isPrefixR = false]);
+  StringCommendEntity(this.start, this.end, this.ignoreNumber,
+      [this.isPrefixR = false]);
 }

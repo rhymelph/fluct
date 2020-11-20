@@ -44,7 +44,7 @@ bool isUpperCase(int c) => c >= 65 && c <= 90;
 String formatUnderlineName(String name) {
   final codeList = name.codeUnits;
   List<int> result = [];
-  for (int i =0; i <codeList.length;i++) {
+  for (int i = 0; i < codeList.length; i++) {
     final code = codeList[i];
     if (isUpperCase(code) && i != 0) {
       result.addAll('_'.codeUnits);

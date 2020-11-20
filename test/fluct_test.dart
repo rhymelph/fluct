@@ -27,15 +27,14 @@ void main() {
         }
         continue;
       }
-      if(_scanner.position == parseContent.length){
+      if (_scanner.position == parseContent.length) {
         _scanner.expectDone();
         break;
       }
-      if(lastPosition == _scanner.position){
-        _scanner.position =lastPosition+1;
+      if (lastPosition == _scanner.position) {
+        _scanner.position = lastPosition + 1;
       }
       lastPosition = _scanner.position;
-
     }
   });
   test('format file name', () async {
@@ -43,5 +42,4 @@ void main() {
     String result = formatUnderlineName(content);
     print(result);
   });
-
 }

@@ -1,5 +1,4 @@
-
-const stful =r'''import 'package:flutter/material.dart';
+const stful = r'''import 'package:flutter/material.dart';
 
 class $NAME$ extends StatefulWidget {
   @override
@@ -12,7 +11,6 @@ class _$NAME$State extends State<$NAME$> {
     return Container();
   }
 }''';
-
 
 const stless = r'''import 'package:flutter/material.dart';
 

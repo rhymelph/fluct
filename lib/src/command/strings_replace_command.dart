@@ -140,7 +140,7 @@ class StringsReplaceCommand extends Command<int> {
             }
           }
         }
-        
+
         final entities = getStringFromFile(sourceContent);
         for (final entity in entities) {
           collectionString(

@@ -17,7 +17,8 @@ class AssetsGenCommand extends Command<int> {
         help: 'Your output directory path -- default `./lib/generated`.');
     argParser.addOption('ignore', abbr: 'i', help: 'Ignore your prefix path.');
     argParser.addFlag('rename',
-        abbr: 'r', help: 'Include chinese filename will be rename to English filename.');
+        abbr: 'r',
+        help: 'Include chinese filename will be rename to English filename.');
     argParser.addFlag('collect',
         abbr: 'c',
         help:
@@ -75,8 +76,9 @@ class AssetsGenCommand extends Command<int> {
     await writeFromDirectory(
         sink,
         assetsDirectory,
-        (String asset) =>asset.isEmpty?'':
-            "  static final String  ${formatParams(asset)} = '${getParamsValue(asset.substring(2),ignorePaths)}';",
+        (String asset) => asset.isEmpty
+            ? ''
+            : "  static final String  ${formatParams(asset)} = '${getParamsValue(asset.substring(2), ignorePaths)}';",
         progress);
     sink.writeln(
       '}',
@@ -92,21 +94,22 @@ class AssetsGenCommand extends Command<int> {
     logger.stdout(io.wrapWith('flutter:', [io.yellow]));
     logger.stdout(io.wrapWith('  assets:', [io.yellow]));
     for (final assetDirectory in assetDirectories) {
-      logger.stdout(io.wrapWith('    - ${assetDirectory.substring(2)}/', [io.yellow]));
+      logger.stdout(
+          io.wrapWith('    - ${assetDirectory.substring(2)}/', [io.yellow]));
     }
     logger.stdout(io.wrapWith('...............................', [io.yellow]));
     logger.stdout('All done exit 0');
     return 0;
   }
 
-  String getParamsValue(String value,List<String> ignorePath){
+  String getParamsValue(String value, List<String> ignorePath) {
     var result = value;
-    ignorePath.forEach((s){
+    ignorePath.forEach((s) {
       result = result.replaceFirst(s, '');
-
     });
     return result;
   }
+
   static List<String> assetDirectories = [];
 
   Future<void> writeFromDirectory(IOSink sink, Directory directory,
@@ -114,12 +117,12 @@ class AssetsGenCommand extends Command<int> {
     final fileList = directory.listSync();
 
     for (final myfile in fileList) {
-        var _file = myfile;
+      var _file = myfile;
 
       if (await FileSystemEntity.isDirectory(_file.path)) {
-        var directoryName = _file.path.substring(_file.path.lastIndexOf('/')+1);
-        if (hasChinese(directoryName) &&
-            argResults['rename'] == true) {
+        var directoryName =
+            _file.path.substring(_file.path.lastIndexOf('/') + 1);
+        if (hasChinese(directoryName) && argResults['rename'] == true) {
           var fileParentPath = _file.parent.path;
           final sourceName = directoryName;
           logger.stdout('tip: will transform name :$sourceName');
@@ -128,10 +131,10 @@ class AssetsGenCommand extends Command<int> {
           logger.stdout('tip: transform result :$transformName');
           final d = Directory(_file.path);
           _file = await d.rename('${fileParentPath}/$transformName');
-        } 
+        }
         assetDirectories.add(_file.path);
-          await writeFromDirectory(
-              sink, Directory(_file.path), generated, progress);
+        await writeFromDirectory(
+            sink, Directory(_file.path), generated, progress);
       } else {
         final fileParentPath = _file.parent.path;
         final fileParentName =
@@ -145,10 +148,9 @@ class AssetsGenCommand extends Command<int> {
           if (fileName.contains('@3x') || fileName.contains('@2x')) {
             final newFileName =
                 fileName.replaceAll('@3x', '').replaceAll('@2x', '');
-            _file =await _file.rename('${fileParentPath}/$newFileName');
+            _file = await _file.rename('${fileParentPath}/$newFileName');
             //包含中文，进行翻译
-            if (hasChinese(newFileName) &&
-                argResults['rename'] == true) {
+            if (hasChinese(newFileName) && argResults['rename'] == true) {
               final sourceName =
                   newFileName.substring(0, newFileName.lastIndexOf('.'));
               final sourceType =
@@ -157,12 +159,12 @@ class AssetsGenCommand extends Command<int> {
               var transformName = await transform(sourceName);
               transformName = transformName.replaceAll(' ', '_');
               logger.stdout('tip: transform result :$transformName');
-              _file =await _file.rename('${fileParentPath}/$transformName$sourceType');
+              _file = await _file
+                  .rename('${fileParentPath}/$transformName$sourceType');
             }
           } else {
             //包含中文，进行翻译
-            if (hasChinese(fileName) &&
-                argResults['rename'] == true) {
+            if (hasChinese(fileName) && argResults['rename'] == true) {
               final sourceName =
                   fileName.substring(0, fileName.lastIndexOf('.'));
               final sourceType = fileName.substring(fileName.lastIndexOf('.'));
@@ -170,7 +172,8 @@ class AssetsGenCommand extends Command<int> {
               var transformName = await transform(sourceName);
               transformName = transformName.replaceAll(' ', '_');
               logger.stdout('tip: transform result :$transformName');
-              _file = await _file.rename('${fileParentPath}/$transformName$sourceType');
+              _file = await _file
+                  .rename('${fileParentPath}/$transformName$sourceType');
             }
           }
           // print('ignore: file in:${file.path}');
@@ -198,8 +201,7 @@ class AssetsGenCommand extends Command<int> {
             await _file.delete();
             _file = newFile;
             //包含中文，进行翻译
-            if (hasChinese(newFileName) &&
-                argResults['rename'] == true) {
+            if (hasChinese(newFileName) && argResults['rename'] == true) {
               final sourceName =
                   newFileName.substring(0, newFileName.lastIndexOf('.'));
               final sourceType =
@@ -214,8 +216,7 @@ class AssetsGenCommand extends Command<int> {
             // sink.writeln(generated(_file.path));
           } else {
             //包含中文，进行翻译
-            if (hasChinese(fileName) &&
-                argResults['rename'] == true) {
+            if (hasChinese(fileName) && argResults['rename'] == true) {
               final sourceName =
                   fileName.substring(0, fileName.lastIndexOf('.'));
               final sourceType = fileName.substring(fileName.lastIndexOf('.'));
@@ -223,7 +224,8 @@ class AssetsGenCommand extends Command<int> {
               var transformName = await transform(sourceName);
               transformName = transformName.replaceAll(' ', '_');
               logger.stdout('tip: transform result :$transformName');
-              _file = await _file.rename('${fileParentPath}/$transformName$sourceType');
+              _file = await _file
+                  .rename('${fileParentPath}/$transformName$sourceType');
             }
             sink.writeln(generated(_file.path));
           }
@@ -237,11 +239,11 @@ class AssetsGenCommand extends Command<int> {
 //格式化参数
   String formatParams(String path) {
     String formatPath = path.startsWith('./') ? path.substring(2) : path;
-    if(formatPath.indexOf('.') != -1){
-    //文件类型
-    // String type = formatPath.substring(formatPath.lastIndexOf('.') + 1);
-    //去掉类型
-    formatPath = formatPath.substring(0,formatPath.lastIndexOf('.'));
+    if (formatPath.indexOf('.') != -1) {
+      //文件类型
+      // String type = formatPath.substring(formatPath.lastIndexOf('.') + 1);
+      //去掉类型
+      formatPath = formatPath.substring(0, formatPath.lastIndexOf('.'));
     }
     List<String> pathList = formatPath
         .replaceAll('/', '_')

@@ -40,8 +40,7 @@ class NativeGenCommand extends Command<int> {
           in libraryMirror.declarations.values) {
         if (declarationMirror is MethodMirror &&
             MirrorSystem.getName(declarationMirror.simpleName) ==
-                'configurePigeon') {
-        }
+                'configurePigeon') {}
       }
     }
     return 0;
@@ -55,7 +54,6 @@ class NativeGenCommand extends Command<int> {
       output: argResults['output'],
     );
   }
-
 }
 
 class NativeOptions {
