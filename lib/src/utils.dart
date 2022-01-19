@@ -30,7 +30,9 @@ Future<String> transform(String content) async {
       'http://fanyi.youdao.com/translate?&doctype=json&type=AUTO&i=$content');
   final resultString = result.body;
   // print(resultString);
-  return json.decode(resultString)['translateResult'][0][0]['tgt'];
+  List transformList = json.decode(resultString)['translateResult'][0];
+  List<String> tgtList = transformList.map((e) => e['tgt']).toList();
+  return tgtList.join('');
 }
 
 //是否含有中文
@@ -43,8 +45,8 @@ bool isUpperCase(int c) => c >= 65 && c <= 90;
 //构建Dart文件名字
 String formatUnderlineName(String name) {
   final codeList = name.codeUnits;
-  List<int> result = [];
-  for (int i = 0; i < codeList.length; i++) {
+  var result = <int>[];
+  for (var i = 0; i < codeList.length; i++) {
     final code = codeList[i];
     if (isUpperCase(code) && i != 0) {
       result.addAll('_'.codeUnits);
@@ -56,10 +58,10 @@ String formatUnderlineName(String name) {
 
 //查找所有字符串
 List<StringCommendEntity> getStringFromFile(String fileContent) {
-  List<StringCommendEntity> entities = [];
+  var entities = <StringCommendEntity>[];
   final scanner = StringScanner(fileContent);
-  int lastPosition = scanner.position;
-  int contentLength = fileContent.length;
+  var lastPosition = scanner.position;
+  var contentLength = fileContent.length;
   while (!scanner.isDone) {
     scanner.scan(RegExp(r'\s+'));
     if (scanner.scan(RegExp(r'"""(?:[^"\\]|\\(.|\n))*"""')) ||

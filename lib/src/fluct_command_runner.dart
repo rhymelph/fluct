@@ -1,5 +1,6 @@
 import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
+import 'package:fluct/src/command/strings_translate_command.dart';
 import 'package:fluct/src/utils.dart';
 import 'command/assets_gen_command.dart';
 import 'command/create_command.dart';
@@ -7,7 +8,7 @@ import 'command/native_gen_command.dart';
 import 'command/strings_gen_command.dart';
 import 'command/strings_replace_command.dart';
 
-const packageVersion = '1.0.6';
+const packageVersion = '1.0.8';
 
 Future<int> run(List<String> args) => _CommandRunner().run(args);
 
@@ -19,6 +20,7 @@ class _CommandRunner extends CommandRunner<int> {
     addCommand(AssetsGenCommand());
     addCommand(StringsGenCommand());
     addCommand(StringsReplaceCommand());
+    addCommand(StringsTranslateCommand());
     addCommand(NativeGenCommand());
   }
 

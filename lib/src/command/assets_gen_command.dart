@@ -10,12 +10,12 @@ const fileName = 'a.dart';
 /// 自动获取项目下的资源文件，并生成A.dart文件
 class AssetsGenCommand extends Command<int> {
   AssetsGenCommand() {
-    argParser.addOption('assets',
-        abbr: 'a', help: 'Your asset directory path -- default `./assets`.');
+    argParser.addOption('input',
+        abbr: 'i', help: 'Your input directory path -- default `./assets`.');
     argParser.addOption('output',
         abbr: 'o',
         help: 'Your output directory path -- default `./lib/generated`.');
-    argParser.addOption('ignore', abbr: 'i', help: 'Ignore your prefix path.');
+    argParser.addOption('ignore', help: 'Ignore your prefix path.');
     argParser.addFlag('rename',
         abbr: 'r',
         help: 'Include chinese filename will be rename to English filename.');
@@ -23,9 +23,12 @@ class AssetsGenCommand extends Command<int> {
         abbr: 'c',
         help:
             'Collect filename include @2x/@3x/@4x strings file to /2.0x,/3.0x,/4.0x directory.');
+    argParser.addFlag('list', abbr: 'l', help: 'Collect all image into list');
   }
+
   @override
   String get description => 'Auto generate assets to dart file.';
+
   @override
   String get invocation => '${super.invocation} <command> <path>';
 
@@ -34,11 +37,12 @@ class AssetsGenCommand extends Command<int> {
   final Logger logger = Logger.standard();
 
   Future<int> run() async {
-    List<String> ignorePaths = [];
-    String assetsPath = './assets';
-    String outputPath = './lib/generated';
-    if (argResults['assets'] != null) {
-      assetsPath = argResults['assets'];
+    var ignorePaths = <String>[];
+    var inputPath = './assets';
+    var outputPath = './lib/generated';
+    var isCollectList = false;
+    if (argResults['input'] != null) {
+      inputPath = argResults['input'];
     }
 
     if (argResults['output'] != null) {
@@ -48,14 +52,17 @@ class AssetsGenCommand extends Command<int> {
     if (argResults['ignore'] != null) {
       ignorePaths = (argResults['ignore'].toString()).split(',');
     }
-    logger.stdout('tip: assets directory path in `${assetsPath}`');
+    if (argResults['list'] != null) {
+      isCollectList = true;
+    }
+    logger.stdout('tip: input directory path in `${inputPath}`');
     logger.stdout('tip: output directory path in `${outputPath}`');
-    final assetsDirectory = Directory(assetsPath);
+    final inputDirectory = Directory(inputPath);
     final outputDirectory = Directory(outputPath);
 
-    if (!await assetsDirectory.exists()) {
+    if (!await inputDirectory.exists()) {
       logger.stdout(
-          io.wrapWith('error: assets file path is not exists.', [io.red]));
+          io.wrapWith('error: input directory path is not exists.', [io.red]));
       print('exit 0');
       return 0;
     }
@@ -73,13 +80,22 @@ class AssetsGenCommand extends Command<int> {
     sink.writeln('// github:  https://github.com/rhymelph');
     sink.writeln('// version: $packageVersion');
     sink.writeln('class A {');
-    await writeFromDirectory(
-        sink,
-        assetsDirectory,
-        (String asset) => asset.isEmpty
-            ? ''
-            : "  static final String  ${formatParams(asset)} = '${getParamsValue(asset.substring(2), ignorePaths)}';",
-        progress);
+    var assetList = <String>[];
+
+    await writeFromDirectory(sink, inputDirectory, (String asset) {
+      if (asset.isEmpty) return '';
+
+      final paramsName = '${formatParams(asset)}';
+      assetList.add(paramsName);
+      return asset.isEmpty
+          ? ''
+          : "  static final String  $paramsName = '${getParamsValue(asset.substring(2), ignorePaths)}';";
+    }, progress);
+    if (isCollectList) {
+      sink.writeln('''  static List<String> get allList => [
+${assetList.map((e) => '        $e,').join('\n')}
+      ];''');
+    }
     sink.writeln(
       '}',
     );

@@ -16,8 +16,12 @@ class StringsGenCommand extends Command<int> {
     argParser.addOption('assets',
         abbr: 'a', help: 'Your asset directory path -- default `./lib`.');
     argParser.addFlag('translate',
-        abbr: 't', help: 'Auto translate Chinese to English.');
+        abbr: 't',
+        help:
+            'Auto translate Chinese to English,if `-e` will translate to Chinese.');
+    argParser.addFlag('english', abbr: 'e', help: 'Use from english.');
   }
+
   @override
   String get description => 'Auto generate chinese strings to json file.';
 
@@ -30,6 +34,7 @@ class StringsGenCommand extends Command<int> {
     String outputPath = './lib/generated';
     String libPath = './lib';
     bool isTranslate = argResults['translate'];
+    bool isEnglish = argResults['english'];
 
     if (argResults['output'] != null) {
       outputPath = argResults['output'];
@@ -47,8 +52,8 @@ class StringsGenCommand extends Command<int> {
       print('exit 0');
       return 0;
     }
-    final progress =
-        logger.progress('waiting: seek chinese strings form your $libPath');
+    final progress = logger.progress(
+        'waiting: seek ${isEnglish ? 'english' : 'chinese'} strings form your $libPath');
     File stringFile = File('$outputPath/$_outputName');
     if (stringFile.existsSync()) {
       await stringFile.delete();
